@@ -9,8 +9,8 @@ class Polarities:
 
 @dataclass
 class AspectData:
-    aspect: T.List[int]
-    opinion: T.List[int]
+    aspect: str
+    opinion: str
     polarity: str
 
 

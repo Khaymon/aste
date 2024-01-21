@@ -11,6 +11,10 @@ class BankDataReader(BaseDataReader):
     TARGET_SEPARATOR = "####"
 
     @staticmethod
+    def _str_from_ids(text: str, ids: T.List[int]) -> str:
+        return ' '.join(text.split()[idx] for idx in ids)
+
+    @staticmethod
     def from_file(path: pathlib.Path, train: bool = True) -> T.List[data_common_lib.SampleData]:
         with open(path, 'r') as input_file:
             lines = input_file.readlines()
@@ -21,7 +25,11 @@ class BankDataReader(BaseDataReader):
             
             if train:
                 aspects = [
-                    data_common_lib.AspectData(aspect, opinion, polarity)
+                    data_common_lib.AspectData(
+                        BankDataReader._str_from_ids(text, aspect),
+                        BankDataReader._str_from_ids(text, opinion),
+                        polarity,
+                    )
                     for aspect, opinion, polarity in ast.literal_eval(aspects)
                 ]
             else:
