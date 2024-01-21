@@ -21,7 +21,17 @@ def _parse_args():
 
 
 class Metrics:
+    def _normalize_aspects(self, samples: T.List[T.List[AspectData]]) -> T.List[T.List[AspectData]]:
+        result_aspects = []
+        for aspects in samples:
+            current_aspects = [AspectData(aspect.aspect.lower(), aspect.opinion.lower(), aspect.polarity.lower()) for aspect in aspects]
+            result_aspects.append(current_aspects)
+
+        return result_aspects
+
     def calculate(self, true: T.List[T.List[AspectData]], predicted: T.List[T.List[SampleData]]):
+        true = self._normalize_aspects(true)
+        predicted = self._normalize_aspects(predicted)
         assert len(true) == len(predicted)
 
         self.tp = 0
