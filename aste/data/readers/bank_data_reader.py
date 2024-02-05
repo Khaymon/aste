@@ -26,11 +26,13 @@ class BankDataReader(BaseDataReader):
             if train:
                 aspects = [
                     data_common_lib.AspectData(
-                        BankDataReader._str_from_ids(text, aspect),
-                        BankDataReader._str_from_ids(text, opinion),
-                        polarity,
+                        aspect=BankDataReader._str_from_ids(text, aspect_ids),
+                        opinion=BankDataReader._str_from_ids(text, opinion_ids),
+                        polarity=polarity,
+                        aspect_ids=aspect_ids,
+                        opinion_ids=opinion_ids,
                     )
-                    for aspect, opinion, polarity in ast.literal_eval(aspects)
+                    for aspect_ids, opinion_ids, polarity in ast.literal_eval(aspects)
                 ]
             else:
                 aspects = None

@@ -13,6 +13,9 @@ class AspectData:
     opinion: str
     polarity: str
 
+    aspect_ids: T.Optional[T.List[int]] = None
+    opinion_ids: T.Optional[T.List[int]] = None
+
 
 @dataclass
 class SampleData:
