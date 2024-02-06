@@ -6,8 +6,8 @@
 # Experiments
 ## T5 fine-tuning
 
-| checkpoint              | P      | R      | F1     | recipe                           |
-| ----------------------- | ------ | ------ | ------ | -------------------------------- |
-| ai-forever/FRED-T5-1.7B | 0.3424 | 0.3698 | 0.3556 | experiment-01-t5-1.7B-freeze-400 |
-|                         |        |        |        |                                  |
-|                         |        |        |        |                                  |
+| checkpoint              | P      | R      | F1     | recipe                                     |
+| ----------------------- | ------ | ------ | ------ | ------------------------------------------ |
+| ai-forever/FRED-T5-1.7B | 0.3424 | 0.3698 | 0.3556 | experiment-01-t5-1.7B-freeze-400           |
+| ai-forever/FRED-T5-1.7B | 0.554  | 0.405  | 0.4679 | experiment-03-t5-1.7B-freeze-300-sentences |
+|                         |        |        |        |                                            |

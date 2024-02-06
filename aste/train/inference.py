@@ -3,9 +3,8 @@ import pathlib
 from tqdm import tqdm
 import typing as T
 
-from aste.data.readers import BankDataReader
 from aste.data.common import AspectData, SampleData
-from aste.train.data_providers import ModelDataset, ModelDatasetModule
+from aste.train.data_providers import DataModule
 from aste.train.models import BaseGenerationModel
 from aste.train.recipes import TrainRecipe
 
@@ -21,7 +20,6 @@ def _parse_args():
     )
 
     parser.add_argument("--recipe", type=pathlib.Path, required=True, help="Path to the train recipe")
-    parser.add_argument("--data-path", type=pathlib.Path, required=True, help="Path to the dataset")
     parser.add_argument("--gpu", type=int, required=True, help="GPU to inference model")
     parser.add_argument("--checkpoint", type=pathlib.Path, required=True, help="Path to the model checkpoint")
     parser.add_argument("--result-path", type=pathlib.Path, required=True, help="Path to the inference result")
@@ -63,23 +61,32 @@ def main():
 
     recipe = TrainRecipe.from_file(args.recipe)
 
-    data = BankDataReader.from_file(args.data_path)
-    dataset_module = ModelDatasetModule(recipe=recipe, dev_data=data)
-
     model = BaseGenerationModel.load_from_checkpoint(args.checkpoint, recipe=recipe).eval()
     model.to(device)
 
-    tokenizer = getattr(transformers, recipe.tokenizer_class_name).from_pretrained(recipe.model_name)
-    results = []
-    with torch.no_grad():
-        for batch in tqdm(dataset_module.val_dataloader()):
-            output_ids = model._model.generate(batch["source_ids"].to(device), max_length=recipe.output_max_length).cpu()
-            texts = tokenizer.batch_decode(output_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+    test_dataloader = DataModule.get_dataloader(recipe.test_dataloader_recipe)
+    output_max_length = recipe.test_dataloader_recipe.dataset_recipe.output_max_length
 
-            results.extend(texts)
-    
+    tokenizer = getattr(transformers, recipe.tokenizer_class_name).from_pretrained(recipe.model_name)
+    all_predictions = []
+    all_sample_ids = []
+    with torch.no_grad():
+        for batch in tqdm(test_dataloader):
+            output_ids = model._model.generate(batch["source_ids"].to(device), max_length=output_max_length).cpu()
+            predictions = tokenizer.batch_decode(output_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+
+            sample_ids = list(batch["sample_ids"].numpy())
+
+            assert len(predictions) == len(sample_ids), f"{len(predictions)} vs {len(sample_ids)}"
+
+            all_predictions.extend(predictions)
+            all_sample_ids.extend(sample_ids)
+
     with open(args.result_path, 'w') as output_file:
-        output_file.writelines('\n'.join(results))
+        output_file.writelines(
+            '\n'.join(str(sample_id) + '\t' + prediction
+            for sample_id, prediction in zip(all_sample_ids, all_predictions))
+        )
 
 
 if __name__ == "__main__":

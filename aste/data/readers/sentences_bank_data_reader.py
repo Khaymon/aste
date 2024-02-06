@@ -19,7 +19,7 @@ class SentenceBankDataReader(BaseDataReader):
             lines = input_file.readlines()
 
         data = []
-        for line in lines:
+        for sample_id, line in enumerate(lines):
             text, aspects = line.split(SentenceBankDataReader.TARGET_SEPARATOR)
             sentences = list(sentenize(text))
             aspects = ast.literal_eval(aspects)
@@ -35,7 +35,6 @@ class SentenceBankDataReader(BaseDataReader):
                 aspect_ids, opinion_ids, polarity = aspects[aspect_idx]
 
                 sentence_tokens = len(sentence.split(SentenceBankDataReader.TOKENS_SEPARATOR))
-                print(f"| SENTENCE {sentence} | VIEWED TOKENS {tokens_viewed} | SENTENCE TOKENS {sentence_tokens} |")
                 if max(aspect_ids + opinion_ids) < tokens_viewed + sentence_tokens and min(aspect_ids + opinion_ids) >= tokens_viewed:
                     sentence_aspects.append(
                         data_common_lib.AspectData(
@@ -46,19 +45,17 @@ class SentenceBankDataReader(BaseDataReader):
                             opinion_ids=opinion_ids,
                         )
                     )
-                    print(f"| ADD ASPECT {aspect_ids}, OPINIONS {opinion_ids}")
                     aspect_idx += 1
                 elif max(aspect_ids + opinion_ids) < tokens_viewed:
                     aspect_idx += 1
                 else:
-                    print(f"| GO TO THE NEXT SENTENCE |")
-                    data.append(data_common_lib.SampleData(text=sentence, aspects=sentence_aspects))
+                    data.append(data_common_lib.SampleData(sample_id=sample_id, text=sentence, aspects=sentence_aspects))
                     sentence_aspects = []
                     sentence_idx += 1
                     tokens_viewed += sentence_tokens
             
             while sentence_idx < len(sentences):
-                data.append(data_common_lib.SampleData(text=sentences[sentence_idx].text, aspects=sentence_aspects))
+                data.append(data_common_lib.SampleData(sample_id=sample_id, text=sentences[sentence_idx].text, aspects=sentence_aspects))
                 sentence_aspects = []
                 sentence_idx += 1
 

@@ -2,7 +2,7 @@
 [dataloaders.train]
 [dataloaders.train.dataset]
 data_path = "/home/khaymonenko/aste/data/bank_3200/train_full.txt"
-datareader_class_name = "BankDataReader"
+datareader_class_name = "SentenceBankDataReader"
 dataset_class_name = "BasicDataset"
 
 tokenizer_class_name = "GPT2Tokenizer"
@@ -17,7 +17,7 @@ num_workers = 8
 
 [dataloaders.dev.dataset]
 data_path = "/home/khaymonenko/aste/data/bank_3200/dev_full.txt"
-datareader_class_name = "BankDataReader"
+datareader_class_name = "SentenceBankDataReader"
 dataset_class_name = "BasicDataset"
 
 tokenizer_class_name = "GPT2Tokenizer"
@@ -32,7 +32,7 @@ num_workers = 8
 
 [dataloaders.test.dataset]
 data_path = "/home/khaymonenko/aste/data/bank_3200/test_full.txt"
-datareader_class_name = "BankDataReader"
+datareader_class_name = "SentenceBankDataReader"
 dataset_class_name = "BasicDataset"
 
 tokenizer_class_name = "GPT2Tokenizer"

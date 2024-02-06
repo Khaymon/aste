@@ -19,5 +19,6 @@ class AspectData:
 
 @dataclass
 class SampleData:
+    sample_id: int
     text: str
     aspects: T.Optional[T.List[AspectData]] = None

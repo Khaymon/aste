@@ -4,7 +4,8 @@ import typing as T
 
 from aste.data.readers import BankDataReader
 from aste.data.common import AspectData, SampleData
-from aste.train.data_providers import ModelDataset
+from aste.train.decoders import BasicDecoder
+from aste.train.data_providers.dataset import ASTEDataset
 
 
 def _parse_args():
@@ -21,15 +22,17 @@ def _parse_args():
 
 
 class Metrics:
-    def _normalize_aspects(self, samples: T.List[T.List[AspectData]]) -> T.List[T.List[AspectData]]:
-        result_aspects = []
-        for aspects in samples:
-            current_aspects = [AspectData(aspect.aspect.lower(), aspect.opinion.lower(), aspect.polarity.lower()) for aspect in aspects]
-            result_aspects.append(current_aspects)
+    def _normalize_aspects(self, samples: T.Dict[int, T.List[AspectData]]) -> T.Dict[int, T.List[AspectData]]:
+        result_aspects = {}
+        for sample_id, aspects in samples.items():
+            result_aspects[sample_id] = [
+                AspectData(aspect.aspect.lower(), aspect.opinion.lower(), aspect.polarity.lower())
+                for aspect in aspects
+            ]
 
         return result_aspects
 
-    def calculate(self, true: T.List[T.List[AspectData]], predicted: T.List[T.List[SampleData]]):
+    def calculate(self, true: T.Dict[int, T.List[AspectData]], predicted: T.Dict[int, T.List[SampleData]]):
         true = self._normalize_aspects(true)
         predicted = self._normalize_aspects(predicted)
         assert len(true) == len(predicted)
@@ -37,7 +40,17 @@ class Metrics:
         self.tp = 0
         self.fp = 0
         self.fn = 0
-        for true_aspects, pred_aspects in zip(true, predicted):
+        for sample_id in (set(true) | set(predicted)):
+            if sample_id not in true:
+                print(f"Sample id {sample_id} is not found in true aspects. Passing it")
+                continue
+            if sample_id not in predicted:
+                print(f"Sample id {sample_id} is not found in predicted aspects. Passing it")
+                continue
+
+            true_aspects = true[sample_id]
+            pred_aspects = predicted[sample_id]
+
             current_tp = sum(pred_aspect in true_aspects for pred_aspect in pred_aspects)
             current_fp = len(pred_aspects) - current_tp
             current_fn = sum(true_aspect not in pred_aspects for true_aspect in true_aspects)
@@ -62,16 +75,15 @@ class Metrics:
 def main():
     args = _parse_args()
 
-    with open(args.predictions_path, 'r') as input_file:
-        lines = input_file.readlines()
-    
     test_data = BankDataReader.from_file(args.test_path)
-    predicted_aspects = [ModelDataset.decode(text) for text in lines]
+    test_aspects = {sample.sample_id: sample.aspects for sample in test_data}
+
+    predicted_aspects = BasicDecoder.decode(args.predictions_path, ASTEDataset.get_dataset("BasicDataset"))
 
     metrics = Metrics()
-    metrics.calculate([sample.aspects for sample in test_data], predicted_aspects)
+    metrics.calculate(test_aspects, predicted_aspects)
 
-    print(metrics.precision, metrics.recall, metrics.f1)
+    print(f"Precision: {metrics.precision}, Recall: {metrics.recall}, F1: {metrics.f1}")
 
 
 if __name__ == "__main__":

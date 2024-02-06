@@ -1,34 +1,39 @@
 from dataclasses import dataclass
-import pathlib
 import typing as T
 
-import toml
+from .base_recipe import BaseRecipe
+from .dataloader_recipe import DataLoaderRecipe
 
 
 @dataclass
-class TrainRecipe:
-    train_path: str
-    dev_path: str
-    test_path: str
+class TrainRecipe(BaseRecipe):
+    DATALOADERS_KEY: T.ClassVar[str] = "dataloaders"
 
+    TRAIN_KEY: T.ClassVar[str] = "train"
+    DEV_KEY: T.ClassVar[str] = "dev"
+    TEST_KEY: T.ClassVar[str] = "test"
+
+    train_dataloader_recipe: DataLoaderRecipe
+    dev_dataloader_recipe: DataLoaderRecipe
+    test_dataloader_recipe: DataLoaderRecipe
+
+    model_class_name: str
+    tokenizer_class_name: str
     model_name: str
-
-    model_class_name: T.Optional[str] = None
-    tokenizer_class_name: T.Optional[str] = None
-
-    input_max_length: int = 512
-    output_max_length: int = 128
-
-    train_batch_size: int = 2
-    dev_batch_size: int = 2
-
-    num_workers: int = 4
 
     freeze: int = 0
 
     epochs: int = 5
 
     @classmethod
-    def from_file(cls, path: pathlib.Path) -> "TrainRecipe":
-        return cls(**toml.load(path))
-    
+    def from_dict(cls, values: T.Dict) -> "TrainRecipe":
+        train_dataloader_recipe = DataLoaderRecipe.from_dict(values[cls.DATALOADERS_KEY][cls.TRAIN_KEY])
+        dev_dataloader_recipe = DataLoaderRecipe.from_dict(values[cls.DATALOADERS_KEY][cls.DEV_KEY])
+        test_dataloader_recipe = DataLoaderRecipe.from_dict(values[cls.DATALOADERS_KEY][cls.TEST_KEY])
+
+        return cls(
+            train_dataloader_recipe=train_dataloader_recipe,
+            dev_dataloader_recipe=dev_dataloader_recipe,
+            test_dataloader_recipe=test_dataloader_recipe,
+            **values[cls.TRAIN_KEY],
+        )

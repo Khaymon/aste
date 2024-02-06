@@ -8,10 +8,12 @@ def test_read_from_file_train():
     got = BankDataReader.from_file(path)
     want = [
         SampleData(
+            sample_id=0,
             text="Небольшой пример текста , который может быть написан . Даже из двух предложений . . .",
             aspects=[AspectData(aspect="пример текста", opinion="Небольшой", polarity="NEG", aspect_ids=[1, 2], opinion_ids=[0])]
         ),
         SampleData(
+            sample_id=1,
             text="И еще один небольшой пример .",
             aspects=[
                 AspectData(aspect="пример", opinion="небольшой", polarity="NEG", aspect_ids=[4], opinion_ids=[3]),
@@ -29,9 +31,11 @@ def test_read_from_file_test():
     got = BankDataReader.from_file(path, train=False)
     want = [
         SampleData(
+            sample_id=0,
             text="Небольшой пример текста , который может быть написан . Даже из двух предложений . . ."
         ),
         SampleData(
+            sample_id=1,
             text="И еще один небольшой пример ."
         ),
     ]
@@ -45,34 +49,42 @@ def test_sentences_read_from_file():
     got = SentenceBankDataReader.from_file(path)
     want = [
         SampleData(
+            sample_id=0,
             text="Номер 448035 , отличный сотрудник , сделал все быстро и в срок , как и обещал , большое спасибо !",
             aspects=[AspectData(aspect="сотрудник", opinion="отличный", polarity="POS", aspect_ids=[4], opinion_ids=[3])],
         ),
         SampleData(
+            sample_id=0,
             text="Суть проблемы была в том , что мне было необходимо получить договора на мои карты , которые я потеряо или забыл давным давно , сотрудник понял суть вопроса с первой минуты , сделал запрос коллегам и они выслали все в течение 30 минут !",
             aspects=[],
         ),
         SampleData(
+            sample_id=1,
             text="В ноябре обращался в банк ВТБ , в офис на Мира , 26 .",
             aspects=[],
         ),
         SampleData(
+            sample_id=1,
             text="Мне необходимо было установить приложение на телефон .",
             aspects=[],
         ),
         SampleData(
+            sample_id=1,
             text="Старое приложение не работало , а новое скачать не получалось .",
             aspects=[],
         ),
         SampleData(
+            sample_id=1,
             text="Сотрудники подсказали как и где его скачать , помогли установить .",
             aspects=[],
         ),
         SampleData(
+            sample_id=1,
             text="Очень отзывчивые , спасибо .",
             aspects=[],
         ),
         SampleData(
+            sample_id=1,
             text="Рекомендую , персонал очень отзывчивый , доброжелательный .",
             aspects=[
                 AspectData(aspect="персонал", opinion="очень отзывчивый", polarity="POS", aspect_ids=[51], opinion_ids=[52, 53]),

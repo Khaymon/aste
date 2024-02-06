@@ -1,0 +1,7 @@
+[first]
+a = 2
+b = 3
+
+[first.second]
+c = 4
+d = 5

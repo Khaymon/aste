@@ -20,7 +20,7 @@ class BankDataReader(BaseDataReader):
             lines = input_file.readlines()
 
         data = []
-        for line in lines:
+        for sample_id, line in enumerate(lines):
             text, aspects = line.split(BankDataReader.TARGET_SEPARATOR)
             
             if train:
@@ -37,6 +37,6 @@ class BankDataReader(BaseDataReader):
             else:
                 aspects = None
 
-            data.append(data_common_lib.SampleData(text, aspects))
+            data.append(data_common_lib.SampleData(sample_id=sample_id, text=text, aspects=aspects))
 
         return data
