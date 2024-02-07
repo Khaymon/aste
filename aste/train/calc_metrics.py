@@ -36,11 +36,9 @@ class Metrics:
         self.fn = 0
         for sample_id in (set(true) | set(predicted)):
             if sample_id not in true:
-                print(f"Sample id {sample_id} is not found in true aspects. Passing it")
-                continue
+                raise ValueError(f"Sample id {sample_id} is not found in true aspects")
             if sample_id not in predicted:
-                print(f"Sample id {sample_id} is not found in predicted aspects. Passing it")
-                continue
+                raise ValueError(f"Sample id {sample_id} is not found in predicted aspects")
 
             true_aspects = true[sample_id]
             pred_aspects = predicted[sample_id]
