@@ -8,7 +8,7 @@ from aste.data.common import AspectData, SampleData
 from .base_dataset import BaseDataset
 
 
-class ModelDataset(BaseDataset):
+class MVPDataset(BaseDataset):
     ASPECT_COMP_SEP = ";"
     ASPECTS_SEP = "|"
     ORDER_SEP = "<O>"
@@ -82,6 +82,7 @@ class ModelDataset(BaseDataset):
         source_mask = tokenized_inputs["attention_mask"].flatten()
         
         return {
+            "sample_id": self._data[index].sample_id,
             "source_ids": source_ids,
             "source_mask": source_mask,
             "target_ids": target_ids,
