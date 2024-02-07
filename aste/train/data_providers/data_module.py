@@ -8,17 +8,18 @@ from aste.train.data_providers.dataset import ASTEDataset
 
 class DataModule:
     @staticmethod
-    def get_dataset(dataset_recipe: DatasetRecipe) -> Dataset:
+    def get_dataset(dataset_recipe: DatasetRecipe, **kwargs) -> Dataset:
         return ASTEDataset.get_dataset(dataset_recipe.dataset_class_name)(
             data=DataReader.get_reader(dataset_recipe.datareader_class_name).from_file(dataset_recipe.data_path),
             tokenizer=getattr(transformers, dataset_recipe.tokenizer_class_name).from_pretrained(dataset_recipe.tokenizer_model_name),
             source_max_length=dataset_recipe.input_max_length,
             target_max_length=dataset_recipe.output_max_length,
+            **kwargs
         )
 
     @staticmethod
-    def get_dataloader(dataloader_recipe: DataLoaderRecipe) -> DataLoader:
-        dataset = DataModule.get_dataset(dataloader_recipe.dataset_recipe)
+    def get_dataloader(dataloader_recipe: DataLoaderRecipe, **kwargs) -> DataLoader:
+        dataset = DataModule.get_dataset(dataloader_recipe.dataset_recipe, **kwargs)
 
         return DataLoader(
             dataset,

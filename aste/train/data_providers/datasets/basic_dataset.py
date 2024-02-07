@@ -61,9 +61,9 @@ class BasicDataset(BaseDataset):
         }
     
     @classmethod
-    def decode(cls, text: str) -> T.List[AspectData]:
+    def decode(cls, *, prediction: str, **kwargs) -> T.List[AspectData]:
         decoded_aspects = []
-        for aspect_tuple in text.split(cls.ASPECTS_SEP):
+        for aspect_tuple in prediction.split(cls.ASPECTS_SEP):
             try:
                 aspect, opinion, polarity = aspect_tuple.split(cls.ASPECT_COMP_SEP)
                 decoded_aspects.append((aspect.strip(), opinion.strip(), polarity.strip()))

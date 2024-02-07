@@ -1,0 +1,55 @@
+[dataloaders]
+[dataloaders.train]
+[dataloaders.train.dataset]
+data_path = "/home/khaymonenko/aste/data/bank_3200/train_full.txt"
+datareader_class_name = "SentenceBankDataReader"
+dataset_class_name = "MVPDataset"
+
+tokenizer_class_name = "GPT2Tokenizer"
+tokenizer_model_name = "ai-forever/FRED-T5-1.7B"
+
+input_max_length = 512
+output_max_length = 128
+
+[dataloaders.train.dataloader]
+batch_size = 8
+num_workers = 8
+
+[dataloaders.dev.dataset]
+data_path = "/home/khaymonenko/aste/data/bank_3200/dev_full.txt"
+datareader_class_name = "SentenceBankDataReader"
+dataset_class_name = "MVPDataset"
+
+tokenizer_class_name = "GPT2Tokenizer"
+tokenizer_model_name = "ai-forever/FRED-T5-1.7B"
+
+input_max_length = 512
+output_max_length = 128
+
+[dataloaders.dev.dataloader]
+batch_size = 16
+num_workers = 8
+
+[dataloaders.test.dataset]
+data_path = "/home/khaymonenko/aste/data/bank_3200/test_full.txt"
+datareader_class_name = "SentenceBankDataReader"
+dataset_class_name = "MVPDataset"
+
+tokenizer_class_name = "GPT2Tokenizer"
+tokenizer_model_name = "ai-forever/FRED-T5-1.7B"
+
+input_max_length = 512
+output_max_length = 128
+
+[dataloaders.test.dataloader]
+batch_size = 16
+num_workers = 8
+
+[train]
+tokenizer_class_name = "GPT2Tokenizer"
+model_class_name = "T5ForConditionalGeneration"
+model_name = "ai-forever/FRED-T5-1.7B"
+
+freeze = 300
+
+epochs = 20

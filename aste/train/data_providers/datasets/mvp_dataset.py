@@ -82,14 +82,14 @@ class MVPDataset(BaseDataset):
         source_mask = tokenized_inputs["attention_mask"].flatten()
         
         return {
-            "sample_id": self._data[index].sample_id,
+            "sample_ids": self._data[index].sample_id,
             "source_ids": source_ids,
             "source_mask": source_mask,
             "target_ids": target_ids,
         }
     
     @classmethod
-    def decode(cls, text: str, prediction: str) -> T.List[AspectData]:
+    def decode(cls, *, text: str, prediction: str, **kwargs) -> T.List[AspectData]:
         try:
             text, order = text.split(cls.ORDER_SEP)
             decoded_aspects = []

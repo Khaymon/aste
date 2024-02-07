@@ -27,5 +27,5 @@ class BaseDataset(Dataset):
         raise NotImplementedError()
     
     @classmethod
-    def decode(cls, text: str) -> T.List[AspectData]:
+    def decode(cls, *, text: str, prediction: str, **kwargs) -> T.List[AspectData]:
         raise NotImplementedError()

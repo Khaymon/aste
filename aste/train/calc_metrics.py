@@ -4,7 +4,7 @@ import typing as T
 
 from aste.data.readers import BankDataReader
 from aste.data.common import AspectData, SampleData
-from aste.train.decoders import BasicDecoder
+from aste.train.decoders import BasicDecoder, MVPDecoder
 from aste.train.data_providers.dataset import ASTEDataset
 
 
@@ -78,7 +78,7 @@ def main():
     test_data = BankDataReader.from_file(args.test_path)
     test_aspects = {sample.sample_id: sample.aspects for sample in test_data}
 
-    predicted_aspects = BasicDecoder.decode(args.predictions_path, ASTEDataset.get_dataset("BasicDataset"))
+    predicted_aspects = MVPDecoder.decode(args.predictions_path, votes=3)
 
     metrics = Metrics()
     metrics.calculate(test_aspects, predicted_aspects)
