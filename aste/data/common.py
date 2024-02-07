@@ -18,6 +18,9 @@ class AspectData:
 
     def __hash__(self) -> int:
         return hash(self.aspect + self.opinion + self.polarity)
+    
+    def __eq__(self, other: "AspectData") -> bool:
+        return (self.aspect == other.aspect) and (self.opinion == other.opinion) and (self.polarity == other.polarity)
 
 
 @dataclass

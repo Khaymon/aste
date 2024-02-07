@@ -22,19 +22,13 @@ def _parse_args():
 
 
 class Metrics:
-    def _normalize_aspects(self, samples: T.Dict[int, T.List[AspectData]]) -> T.Dict[int, T.List[AspectData]]:
-        result_aspects = {}
-        for sample_id, aspects in samples.items():
-            result_aspects[sample_id] = [
-                AspectData(aspect.aspect.lower(), aspect.opinion.lower(), aspect.polarity.lower())
-                for aspect in aspects
-            ]
+    def _drop_duplicates(self, samples: T.Dict[int, T.Set[AspectData]]) -> T.Dict[int, T.Set[AspectData]]:
+        return {sample_id: set(aspects) for sample_id, aspects in samples.items()}
 
-        return result_aspects
+    def calculate(self, true: T.Dict[int, T.Set[AspectData]], predicted: T.Dict[int, T.Set[AspectData]]):
+        true = self._drop_duplicates(true)
+        predicted = self._drop_duplicates(predicted)
 
-    def calculate(self, true: T.Dict[int, T.List[AspectData]], predicted: T.Dict[int, T.List[SampleData]]):
-        true = self._normalize_aspects(true)
-        predicted = self._normalize_aspects(predicted)
         assert len(true) == len(predicted)
 
         self.tp = 0
