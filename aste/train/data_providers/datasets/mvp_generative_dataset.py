@@ -8,7 +8,7 @@ from aste.data.common import AspectData, SampleData
 from .base_dataset import BaseDataset
 
 
-class MVPDataset(BaseDataset):
+class MVPGenerativeDataset(BaseDataset):
     ASPECT_COMP_SEP = ";"
     ASPECTS_SEP = "|"
     ORDER_SEP = "<O>"
@@ -25,9 +25,12 @@ class MVPDataset(BaseDataset):
         source_max_length: int,
         target_max_length: int,
         order: T.Optional[T.List[str]] = None,
+        **kwargs,
     ):
-        super().__init__(data, tokenizer, source_max_length, target_max_length)
+        super().__init__(data, tokenizer)
 
+        self._source_max_length = source_max_length
+        self._target_max_length = target_max_length
         self.order = order
 
     def __getitem__(self, index: int):

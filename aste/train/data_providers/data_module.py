@@ -14,6 +14,7 @@ class DataModule:
             tokenizer=getattr(transformers, dataset_recipe.tokenizer_class_name).from_pretrained(dataset_recipe.tokenizer_model_name),
             source_max_length=dataset_recipe.input_max_length,
             target_max_length=dataset_recipe.output_max_length,
+            max_length=dataset_recipe.max_length,
             **kwargs
         )
 

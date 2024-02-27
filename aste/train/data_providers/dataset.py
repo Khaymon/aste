@@ -5,8 +5,10 @@ class ASTEDataset:
     @staticmethod
     def get_dataset(name: str):
         if name == "BasicDataset":
-            return BasicDataset
+            return SimpleGenerativeDataset
         elif name == "MVPDataset":
-            return MVPDataset
+            return MVPGenerativeDataset
+        elif name == "SimpleDiscriminativeDataset":
+            return SimpleDiscriminativeDataset
         else:
             raise ValueError(f"Dataset {name} is not implemented")

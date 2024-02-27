@@ -31,7 +31,7 @@ batch_size = 16
 num_workers = 8
 
 [dataloaders.test.dataset]
-data_path = "/home/khaymonenko/aste/data/bank_3200/test_full.txt"
+data_path = "/home/khaymonenko/aste/data/bank_3200/train_full.txt"
 datareader_class_name = "SentenceBankDataReader"
 dataset_class_name = "MVPDataset"
 
@@ -42,7 +42,7 @@ input_max_length = 512
 output_max_length = 128
 
 [dataloaders.test.dataloader]
-batch_size = 16
+batch_size = 64
 num_workers = 8
 
 [train]

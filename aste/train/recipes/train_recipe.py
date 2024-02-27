@@ -17,6 +17,7 @@ class TrainRecipe(BaseRecipe):
     dev_dataloader_recipe: DataLoaderRecipe
     test_dataloader_recipe: DataLoaderRecipe
 
+    aste_model_class_name: str
     model_class_name: str
     tokenizer_class_name: str
     model_name: str

@@ -1,20 +1,13 @@
-import pytorch_lightning as pl
 import torch
-import transformers
 
 from aste.train.recipes import TrainRecipe
 
+from .base_model import BaseModel
 
-class BaseGenerationModel(pl.LightningModule):
+
+class BaseGenerativeModel(BaseModel):
     def __init__(self, recipe: TrainRecipe):
-        super().__init__()
-        
-        self._model = getattr(transformers, recipe.model_class_name).from_pretrained(recipe.model_name)
-        self._tokenizer = getattr(transformers, recipe.tokenizer_class_name).from_pretrained(recipe.model_name)
-
-        for param_num, param in enumerate(self._model.parameters()):
-            if param_num < recipe.freeze:
-                param.requires_grad = False
+        super().__init__(recipe)
         
     def forward(
         self,
@@ -57,6 +50,3 @@ class BaseGenerationModel(pl.LightningModule):
         self.log("val_loss", loss, prog_bar=True, logger=True)
         
         return loss
-
-    def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.0001)

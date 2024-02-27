@@ -11,14 +11,10 @@ class BaseDataset(Dataset):
         self,
         data: T.List[SampleData],
         tokenizer: PreTrainedTokenizer,
-        source_max_length: int,
-        target_max_length: int,
         **kwargs
     ):
         self._data = data
         self._tokenizer = tokenizer
-        self._source_max_length = source_max_length
-        self._target_max_length = target_max_length
         
     def __len__(self) -> int:
         return len(self._data)

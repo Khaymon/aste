@@ -2,7 +2,7 @@ import argparse
 import pathlib
 
 from aste.train.data_providers import DataModule
-from aste.train.models import BaseGenerationModel
+from aste.train.models.model import ASTEModel
 from aste.train.recipes import TrainRecipe
 
 import pytorch_lightning as pl
@@ -28,11 +28,12 @@ def main():
     args = _parse_args()
 
     recipe = TrainRecipe.from_file(args.recipe)
+    model_class = ASTEModel.get_model(recipe.aste_model_class_name)
 
     if args.checkpoint:
-        BaseGenerationModel.load_from_checkpoint(args.checkpoint, recipe=recipe)
+        model_class.load_from_checkpoint(args.checkpoint, recipe=recipe)
     else:
-        model = BaseGenerationModel(recipe)
+        model = model_class(recipe)
 
     checkpoint_callback = ModelCheckpoint(
         dirpath="checkpoints",

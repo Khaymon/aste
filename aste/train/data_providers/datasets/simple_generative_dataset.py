@@ -3,11 +3,10 @@ import typing as T
 from transformers import PreTrainedTokenizer
 
 from aste.data.common import AspectData, SampleData
+from aste.train.data_providers.datasets import BaseGenerativeDataset
 
-from .base_dataset import BaseDataset
 
-
-class BasicDataset(BaseDataset):
+class SimpleGenerativeDataset(BaseGenerativeDataset):
     ASPECT_COMP_SEP = ";"
     ASPECTS_SEP = "|"
 
@@ -16,7 +15,8 @@ class BasicDataset(BaseDataset):
         data: T.List[SampleData],
         tokenizer: PreTrainedTokenizer,
         source_max_length: int,
-        target_max_length: int
+        target_max_length: int,
+        **kwargs,
     ):
         super().__init__(data, tokenizer, source_max_length, target_max_length)
 
