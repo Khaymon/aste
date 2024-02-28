@@ -70,7 +70,7 @@ def main():
     test_data = BankDataReader.from_file(args.test_path)
     test_aspects = {sample.sample_id: sample.aspects for sample in test_data}
 
-    predicted_aspects = MVPDecoder.decode(args.predictions_path, votes=3)
+    predicted_aspects = MVPDecoder.decode(args.predictions_path, votes=2)
 
     metrics = Metrics()
     metrics.calculate(test_aspects, predicted_aspects)

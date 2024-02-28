@@ -65,7 +65,7 @@ def main():
 
     tokenizer = getattr(transformers, recipe.tokenizer_class_name).from_pretrained(recipe.model_name)
 
-    model_runner = GenerativeMVPModelRunner(tokenizer, recipe.test_dataloader_recipe, n_orders=1)
+    model_runner = GenerativeMVPModelRunner(tokenizer, recipe.test_dataloader_recipe, n_orders=3)
     model_runner.run(model, args.result_path)
 
 

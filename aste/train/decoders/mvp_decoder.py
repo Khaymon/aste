@@ -28,10 +28,10 @@ class MVPDecoder(BaseDecoder):
                 aspect_nearest = [BaseDecoder.nearest_levenshtein_word(text, word) for word in predicted_aspect.aspect.split()]
                 opinion_nearest = [BaseDecoder.nearest_levenshtein_word(text, word) for word in predicted_aspect.opinion.split()]
 
-                if not any(word is None for word in aspect_nearest + opinion_nearest):
-                    predicted_aspect.aspect = ' '.join(aspect_nearest)
-                    predicted_aspect.opinion = ' '.join(opinion_nearest)
-                    counts[sample_id][predicted_aspect] += 1
+                # if not any(word is None for word in aspect_nearest + opinion_nearest):
+                #     predicted_aspect.aspect = ' '.join(aspect_nearest)
+                #     predicted_aspect.opinion = ' '.join(opinion_nearest)
+                counts[sample_id][predicted_aspect] += 1
 
         result_predictions = defaultdict(set)
         for sample_id in counts:
