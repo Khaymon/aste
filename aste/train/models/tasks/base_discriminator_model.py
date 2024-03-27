@@ -31,7 +31,7 @@ class BaseDiscriminatorModel(BaseModel):
                 logits = self.forward(batch["input_ids"], batch["attention_mask"])[:5]
                 targets = batch["labels"][:5]
                 print(texts)
-                print(logits)
+                print(torch.nn.functional.softmax(logits, dim=1))
                 print(targets)
 
         return loss

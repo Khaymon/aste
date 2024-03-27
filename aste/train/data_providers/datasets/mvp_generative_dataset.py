@@ -1,6 +1,9 @@
+from collections import defaultdict
+import pathlib
 import random
 import typing as T
 
+import spacy
 from transformers import PreTrainedTokenizer
 
 from aste.data.common import AspectData, SampleData
@@ -18,6 +21,10 @@ class MVPGenerativeDataset(BaseDataset):
     POLARITY_TOKEN = "P"
     ASPECTS_TOKENS = [ASPECT_TOKEN, OPINION_TOKEN, POLARITY_TOKEN]
 
+    POS_BLACKLIST = {
+        "ADP", "PUNCT", "INTJ", "CCONJ"
+    }
+
     def __init__(
         self,
         data: T.List[SampleData],
@@ -25,12 +32,15 @@ class MVPGenerativeDataset(BaseDataset):
         source_max_length: int,
         target_max_length: int,
         order: T.Optional[T.List[str]] = None,
+        nlp: str = None,
         **kwargs,
     ):
         super().__init__(data, tokenizer)
 
         self._source_max_length = source_max_length
         self._target_max_length = target_max_length
+        if nlp:
+            self._nlp = spacy.load(nlp)
         self.order = order
 
     def __getitem__(self, index: int):
@@ -40,8 +50,20 @@ class MVPGenerativeDataset(BaseDataset):
             order = self.ASPECTS_TOKENS.copy()
             random.shuffle(order)
         assert len(set(order)) == 3, "Length of distinct tokens must be equal to 3"
+
+        text = self._data[index].text
+        final_tokens = []
+        if self._nlp is not None:
+            doc = self._nlp(text)
+            for token in doc:
+                final_tokens.append(str(token))
+                pos = str(token.pos_)
+                if pos not in self.POS_BLACKLIST:
+                    final_tokens.append(pos)
+            
+            text = ' '.join(final_tokens)
         
-        text = self._tokenizer.bos_token + self._data[index].text + self.ORDER_SEP + ','.join(order) + self._tokenizer.eos_token
+        text = self._tokenizer.bos_token + text + self.ORDER_SEP + ','.join(order) + self._tokenizer.eos_token
         
         aspects = self._data[index].aspects
         result_aspects = []
@@ -118,3 +140,19 @@ class MVPGenerativeDataset(BaseDataset):
             pass
 
         return [AspectData(aspect, opinion, polarity) for aspect, opinion, polarity in set(decoded_aspects)]
+    
+    @classmethod
+    def from_file(cls, *, file_path: pathlib.Path) -> T.Dict[int, T.Set[SampleData]]:
+        with open(file_path, 'r') as input_file:
+            lines = input_file.readlines()
+        
+        decoded_file = defaultdict(set)
+        for line in lines:
+            idx, text, prediction = line.split('\t')
+            idx = int(idx)
+            aspects = cls.decode(text=text, prediction=prediction)
+            text, _ = text.split(cls.ORDER_SEP)
+
+            decoded_file[idx].add(SampleData(sample_id=idx, text=text, aspects=aspects))
+        
+        return decoded_file

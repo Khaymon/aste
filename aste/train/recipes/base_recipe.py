@@ -6,7 +6,7 @@ import toml
 
 
 @dataclass
-class BaseRecipe:    
+class BaseRecipe:
     @classmethod
     def from_dict(cls, values: T.Dict) -> "BaseRecipe":
         raise NotImplementedError()

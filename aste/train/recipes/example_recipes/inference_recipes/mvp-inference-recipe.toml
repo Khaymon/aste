@@ -1,0 +1,19 @@
+gpu = 7
+checkpoint = "/home/khaymonenko/aste/aste/train/checkpoints/blacklist_pos/epoch=9-step=9399.ckpt"
+result_path = "/home/khaymonenko/aste/aste/train/inference-result.txt"
+n_orders = 6
+
+[dataloader]
+[dataloader.dataset]
+data_path = "/home/khaymonenko/aste/data/bank_3200/test_full.txt"
+datareader_class_name = "SentenceBankDataReader"
+dataset_class_name = "MVPDataset"
+
+input_max_length = 512
+output_max_length = 128
+
+nlp = "ru_core_news_lg"
+
+[dataloader.dataloader]
+batch_size = 16
+num_workers = 8

@@ -1,14 +1,14 @@
 import argparse
 import pathlib
+import toml
 import typing as T
 
 from aste.data.common import AspectData, SampleData
-from aste.train.model_runners import GenerativeMVPModelRunner
+from aste.train.models.model import ASTEModel
 from aste.train.models.tasks import BaseGenerativeModel
-from aste.train.recipes import TrainRecipe
+from aste.train.model_runners import get_model_runner
 
 import torch
-import transformers
 
 
 def _parse_args():
@@ -18,10 +18,8 @@ def _parse_args():
         add_help=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    parser.add_argument("--recipe", type=pathlib.Path, required=True, help="Path to the train recipe")
-    parser.add_argument("--gpu", type=int, required=True, help="GPU to inference model")
-    parser.add_argument("--checkpoint", type=pathlib.Path, required=True, help="Path to the model checkpoint")
-    parser.add_argument("--result-path", type=pathlib.Path, required=True, help="Path to the inference result")
+    parser.add_argument("--train-recipe", type=pathlib.Path, required=True, help="Path to the train recipe")
+    parser.add_argument("--inference-recipe", type=pathlib.Path, required=True, help="Path to the train recipe")
 
     return parser.parse_args()
 
@@ -54,19 +52,18 @@ class Metrics:
 def main():
     args = _parse_args()
 
-    device = torch.device("cuda:" + str(args.gpu) if torch.cuda.is_available() else "cpu")
+    train_recipe = toml.load(args.train_recipe)
+    inference_recipe = toml.load(args.inference_recipe)
+
+    device = torch.device("cuda:" + str(inference_recipe["gpu"]) if torch.cuda.is_available() else "cpu")
 
     print(f"Use {device} for inference")
 
-    recipe = TrainRecipe.from_file(args.recipe)
+    model_class = ASTEModel.get_model(train_recipe["model"]["aste_model_name"])
+    model = model_class.load_from_checkpoint(inference_recipe["checkpoint"], recipe=train_recipe).to(device)
 
-    model = BaseGenerativeModel.load_from_checkpoint(args.checkpoint, recipe=recipe).eval()
-    model.to(device)
-
-    tokenizer = getattr(transformers, recipe.tokenizer_class_name).from_pretrained(recipe.model_name)
-
-    model_runner = GenerativeMVPModelRunner(tokenizer, recipe.test_dataloader_recipe, n_orders=3)
-    model_runner.run(model, args.result_path)
+    model_runner = get_model_runner(inference_recipe["model_runner_name"], inference_recipe, train_recipe)
+    model_runner.run(model, inference_recipe["result_path"])
 
 
 if __name__ == "__main__":

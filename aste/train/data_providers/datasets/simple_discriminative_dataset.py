@@ -14,22 +14,28 @@ class SimpleDiscriminativeDataset(BaseDiscriminativeDataset):
     def __init__(
         self,
         data: T.List[SampleData],
-        false_generated_data: T.List[SampleData],
         tokenizer: PreTrainedTokenizer,
         max_length: int,
+        negatives: T.List[SampleData] = None,
         **kwargs,
     ):
-        concated_data = data + false_generated_data
-        self.targets = [1] * len(data) + [0] * len(false_generated_data)
+        if negatives:
+            concated_data = data + negatives
+            targets = [1] * len(data) + [0] * len(negatives)
+        else:
+            concated_data = data
+            targets = [1] * len(data)
         result_data = []
-        for sample in concated_data:
+        result_targets = []
+        for sample, target in zip(concated_data, targets):
             for aspect in sample.aspects:
                 result_data.append(SampleData(sample.sample_id, sample.text, [aspect]))
+                result_targets.append(target)
 
-        shuffled_ids = np.arange(len(concated_data))
+        shuffled_ids = np.arange(len(result_data))
         random.shuffle(shuffled_ids)
 
-        self.targets = np.array(self.targets)[shuffled_ids]
+        self.targets = np.array(result_targets)[shuffled_ids]
 
         super().__init__(np.array(result_data)[shuffled_ids], tokenizer, max_length)
 
@@ -42,7 +48,7 @@ class SimpleDiscriminativeDataset(BaseDiscriminativeDataset):
             aspect = aspects[0]
             aspect = aspect.aspect + self.ASPECT_COMP_SEP + aspect.opinion + self.ASPECT_COMP_SEP + aspect.polarity
         
-        text = aspect + self._tokenizer.sep_token + self._data[index].text
+        text = aspect + ';' + self._data[index].text
 
         tokenized_inputs = self._tokenizer(
             text,

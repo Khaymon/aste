@@ -1,20 +1,25 @@
+from copy import deepcopy
 import itertools
 import random
 import pathlib
 from tqdm import tqdm
+import typing as T
+
+import transformers
 
 from aste.train.models.tasks import BaseGenerativeModel
-from aste.train.recipes.dataloader_recipe import DataLoaderRecipe
 from aste.train.data_providers import DataModule
 
 from .model_runner import ModelRunner
 
 
 class GenerativeMVPModelRunner(ModelRunner):
-    def __init__(self, tokenizer, recipe: DataLoaderRecipe, n_orders: int = 3):
-        self._tokenizer = tokenizer
-        self._recipe = recipe
-        self._n_orders = n_orders
+    def __init__(self, train_recipe: T.Dict, inference_recipe: T.Dict):
+        super().__init__(train_recipe, inference_recipe)
+
+        self._tokenizer = getattr(
+            transformers, train_recipe["model"]["hub_tokenizer_name"]
+        ).from_pretrained(train_recipe["model"]["hub_tokenizer_checkpoint"])
 
     def _run(self, model: BaseGenerativeModel, result_path: pathlib.Path, **kwargs):
         orders = list(itertools.permutations(['A', 'O', 'P']))
@@ -24,7 +29,10 @@ class GenerativeMVPModelRunner(ModelRunner):
         all_texts = []
         all_sample_ids = []
         for order in orders[:self._n_orders]:
-            test_dataloader = DataModule.get_dataloader(self._recipe, order=order)
+            current_inference_recipe = deepcopy(self._inference_recipe)
+            current_inference_recipe["dataloader"]["dataset"]["order"] = order
+            test_dataloader = DataModule.get_dataloader(self._train_recipe, self._inference_recipe)
+
             for batch in tqdm(test_dataloader):
                 output_ids = model._model.generate(
                     batch["source_ids"].to(model.device),

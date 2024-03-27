@@ -28,3 +28,6 @@ class SampleData:
     sample_id: int
     text: str
     aspects: T.Optional[T.List[AspectData]] = None
+
+    def __hash__(self) -> int:
+        return hash(self.text) + sum(hash(aspect) for aspect in self.aspects)
