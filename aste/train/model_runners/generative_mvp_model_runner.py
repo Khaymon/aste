@@ -28,15 +28,16 @@ class GenerativeMVPModelRunner(ModelRunner):
         all_predictions = []
         all_texts = []
         all_sample_ids = []
-        for order in orders[:self._n_orders]:
+        for order in orders[:self._inference_recipe["n_orders"]]:
             current_inference_recipe = deepcopy(self._inference_recipe)
             current_inference_recipe["dataloader"]["dataset"]["order"] = order
-            test_dataloader = DataModule.get_dataloader(self._train_recipe, self._inference_recipe)
+            test_dataloader = DataModule.get_dataloader(self._train_recipe["model"], self._inference_recipe["dataloader"])
 
             for batch in tqdm(test_dataloader):
                 output_ids = model._model.generate(
                     batch["source_ids"].to(model.device),
-                    max_length=self._recipe.dataset_recipe.output_max_length,
+                    max_length=self._inference_recipe["dataloader"]["dataset"]["output_max_length"],
+                    **self._inference_recipe.get("generation", {})
                 ).cpu()
 
                 texts = self._tokenizer.batch_decode(batch["source_ids"], skip_special_tokens=True, clean_up_tokenization_spaces=False)

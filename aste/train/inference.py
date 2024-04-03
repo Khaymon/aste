@@ -62,7 +62,11 @@ def main():
     model_class = ASTEModel.get_model(train_recipe["model"]["aste_model_name"])
     model = model_class.load_from_checkpoint(inference_recipe["checkpoint"], recipe=train_recipe).to(device)
 
-    model_runner = get_model_runner(inference_recipe["model_runner_name"], inference_recipe, train_recipe)
+    model_runner = get_model_runner(
+        inference_recipe["model_runner_name"],
+        train_recipe=train_recipe,
+        inference_recipe=inference_recipe,
+    )
     model_runner.run(model, inference_recipe["result_path"])
 
 

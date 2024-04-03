@@ -20,6 +20,7 @@ class DataModule:
 
     @staticmethod
     def get_dataloader(model_recipe: T.Dict[str, T.Any], dataloader_recipe: T.Dict[str, T.Any]) -> DataLoader:
+        print(dataloader_recipe)
         return DataLoader(
             DataModule.get_dataset(model_recipe, dataloader_recipe["dataset"]),
             batch_size=dataloader_recipe["dataloader"]["batch_size"],

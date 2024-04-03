@@ -70,5 +70,5 @@ mode = "min"
 
 [train.trainer]
 accelerator = "gpu"
-devices = [1, 2, 3]
+devices = [1, 2]
 max_epochs = 20

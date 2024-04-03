@@ -46,6 +46,17 @@ class Metrics:
             current_tp = sum(pred_aspect in true_aspects for pred_aspect in pred_aspects)
             current_fp = len(pred_aspects) - current_tp
             current_fn = sum(true_aspect not in pred_aspects for true_aspect in true_aspects)
+
+            print("################")
+            print(f"True aspects: {true_aspects}")
+            print("-------------------")
+            print(f"Predicted aspects: {pred_aspects}")
+            print("-------------------")
+            pred_diff = set(pred_aspect for pred_aspect in pred_aspects if pred_aspect not in true_aspects)
+            print(f"Predicted aspects not in true aspects {pred_diff}")
+            print("-------------------")
+            true_diff = set(true_aspect for true_aspect in true_aspects if true_aspect not in pred_aspects)
+            print(f"True aspects not in pred aspects {true_diff}")
             
             self.tp += current_tp
             self.fp += current_fp

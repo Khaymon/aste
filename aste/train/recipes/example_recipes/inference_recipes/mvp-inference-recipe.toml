@@ -1,7 +1,12 @@
-gpu = 7
-checkpoint = "/home/khaymonenko/aste/aste/train/checkpoints/blacklist_pos/epoch=9-step=9399.ckpt"
-result_path = "/home/khaymonenko/aste/aste/train/inference-result.txt"
+gpu = 6
+checkpoint = "/home/khaymonenko/aste/aste/train/checkpoints/blacklist_pos/epoch=9-step=14099.ckpt"
+result_path = "/home/khaymonenko/aste/aste/train/inference-result-beamsearch.txt"
+model_runner_name = "GenerativeMVPModelRunner"
 n_orders = 6
+
+[generation]
+num_beams = 3
+temperature = 0.3
 
 [dataloader]
 [dataloader.dataset]

@@ -115,13 +115,13 @@ class MVPGenerativeDataset(BaseDataset):
     
     @classmethod
     def decode(cls, *, text: str, prediction: str, **kwargs) -> T.List[AspectData]:
+        decoded_aspects = []
         try:
             text, order = text.split(cls.ORDER_SEP)
-            decoded_aspects = []
             for aspect_tuple in prediction.split(cls.ASPECTS_SEP):
                 triplet = aspect_tuple.split(cls.ASPECT_COMP_SEP)
-                assert len(triplet) == 3
-
+                if len(triplet) != 3:
+                    continue
                 aspect = None
                 opinion = None
                 polarity = None
