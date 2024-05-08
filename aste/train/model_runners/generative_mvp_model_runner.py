@@ -35,7 +35,7 @@ class GenerativeMVPModelRunner(ModelRunner):
 
             for batch in tqdm(test_dataloader):
                 output_ids = model._model.generate(
-                    batch["source_ids"].to(model.device),
+                    input_ids=batch["source_ids"].to(model.device),
                     max_length=self._inference_recipe["dataloader"]["dataset"]["output_max_length"],
                     **self._inference_recipe.get("generation", {})
                 ).cpu()

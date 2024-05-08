@@ -39,8 +39,7 @@ class MVPGenerativeDataset(BaseDataset):
 
         self._source_max_length = source_max_length
         self._target_max_length = target_max_length
-        if nlp:
-            self._nlp = spacy.load(nlp)
+
         self.order = order
 
     def __getitem__(self, index: int):
@@ -52,17 +51,6 @@ class MVPGenerativeDataset(BaseDataset):
         assert len(set(order)) == 3, "Length of distinct tokens must be equal to 3"
 
         text = self._data[index].text
-        final_tokens = []
-        if self._nlp is not None:
-            doc = self._nlp(text)
-            for token in doc:
-                final_tokens.append(str(token))
-                pos = str(token.pos_)
-                if pos not in self.POS_BLACKLIST:
-                    final_tokens.append(pos)
-            
-            text = ' '.join(final_tokens)
-        
         text = self._tokenizer.bos_token + text + self.ORDER_SEP + ','.join(order) + self._tokenizer.eos_token
         
         aspects = self._data[index].aspects

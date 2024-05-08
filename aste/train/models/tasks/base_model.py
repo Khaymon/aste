@@ -11,8 +11,9 @@ class BaseModel(pl.LightningModule):
         super().__init__()
         
         self._recipe = recipe
-        self._model = getattr(transformers, recipe["model"]["hub_model_name"]).from_pretrained(recipe["model"]["hub_model_checkpoint"])
         self._tokenizer = getattr(transformers, recipe["model"]["hub_tokenizer_name"]).from_pretrained(recipe["model"]["hub_tokenizer_checkpoint"])
+
+        self._model = getattr(transformers, recipe["model"]["hub_model_name"]).from_pretrained(recipe["model"]["hub_model_checkpoint"])
 
         for param_num, param in enumerate(self._model.parameters()):
             if param_num < recipe["train"]["freeze"]:

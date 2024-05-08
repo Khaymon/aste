@@ -1,0 +1,68 @@
+[dataloaders]
+[dataloaders.train]
+[dataloaders.train.dataset]
+data_path = "/home/khaymonenko/aste/data/bank_3200/train_full.txt"
+datareader_class_name = "SentenceBankDataReader"
+dataset_class_name = "MVPDataset"
+
+input_max_length = 512
+output_max_length = 128
+
+[dataloaders.train.dataloader]
+batch_size = 8
+num_workers = 8
+
+[dataloaders.dev]
+[dataloaders.dev.dataset]
+data_path = "/home/khaymonenko/aste/data/bank_3200/dev_full.txt"
+datareader_class_name = "SentenceBankDataReader"
+dataset_class_name = "MVPDataset"
+
+input_max_length = 512
+output_max_length = 128
+
+[dataloaders.dev.dataloader]
+batch_size = 16
+num_workers = 8
+
+[dataloaders.test]
+[dataloaders.test.dataset]
+data_path = "/home/khaymonenko/aste/data/bank_3200/test_full.txt"
+datareader_class_name = "SentenceBankDataReader"
+dataset_class_name = "MVPDataset"
+
+input_max_length = 512
+output_max_length = 128
+
+[dataloaders.test.dataloader]
+batch_size = 16
+num_workers = 8
+
+[model]
+aste_model_name = "BaseGenerationModel"
+
+hub_model_name = "T5ForConditionalGeneration"
+hub_model_checkpoint = "ai-forever/FRED-T5-1.7B"
+
+hub_tokenizer_name = "GPT2Tokenizer"
+hub_tokenizer_checkpoint = "ai-forever/FRED-T5-1.7B"
+
+[train]
+freeze = 0
+
+[train.callbacks]
+[train.callbacks.checkpoint]
+dirpath = "/home/khaymonenko/aste/aste/train/checkpoints/blacklist_pos"
+save_top_k = 1
+monitor = "val_loss"
+save_weights_only = true
+
+[train.callbacks.early_stopping]
+monitor = "val_loss"
+patience = 1
+mode = "min"
+
+[train.trainer]
+accelerator = "gpu"
+devices = [7]
+max_epochs = 20

@@ -34,7 +34,7 @@ class BaseGenerativeModel(BaseModel):
         if (batch_idx + 1) % 50 == 0:
             with torch.no_grad():
                 initial_text = self._tokenizer.batch_decode(input_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
-                generate_ids = self._model.generate(input_ids, max_length=128)
+                generate_ids = self._model.generate(input_ids=input_ids, max_length=128)
                 text = self._tokenizer.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0]
                 print(initial_text)
                 print(text)

@@ -18,3 +18,6 @@
 | ai-forever/FRED-T5-1.7B | 0.6311 | 0.4211 | 0.5051 | experiment-05-t5-1.7B-freeze-300-sentences-mvp-pos-tags           | 6 orders, 3 quorum, levenshtein |
 | ai-forever/FRED-T5-1.7B | 0.6532 | 0.4513 | 0.5337 | experiment-05-t5-1.7B-freeze-300-sentences-mvp-pos-tags-blacklist | 6 orders, 3 quorum, levenshtein |
 |                         |        |        |        |                                                                   |                                 |
+Select with tree -- | ai-forever/FRED-T5-1.7B | 0.6698 | 0.4712 | 0.5532 |
+LoRA -- Precision: 0.48034934497816595, Recall: 0.49736247174076864, F1: 0.48870788596815995
+Precision: 0.5763016157989228, Recall: 0.48379804069329313, F1: 0.5260139287177388
